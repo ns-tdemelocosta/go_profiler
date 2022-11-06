@@ -15,12 +15,14 @@ func GetProcessesInfo() ([]models.Process, error) {
 		name, err1 := proc.Name()
 		cpuUsage, err2 := proc.CPUPercent()
 		memUsage, err3 := proc.MemoryPercent()
-		if err1 == nil && err2 == nil && err3 == nil {
+		createTime, err4 := proc.CreateTime()
+		if err1 == nil && err2 == nil && err3 == nil && err4 == nil {
 			process = append(process, models.Process{
-				Name:      name,
-				CPUUsage:  cpuUsage,
-				Memory:    memUsage,
-				ProcessId: proc.Pid,
+				Name:       name,
+				CPUUsage:   cpuUsage,
+				Memory:     memUsage,
+				ProcessId:  proc.Pid,
+				CreateTime: createTime,
 			})
 		}
 	}

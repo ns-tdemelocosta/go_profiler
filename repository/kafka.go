@@ -1,13 +1,13 @@
 package repository
 
 import (
+	"fmt"
+
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 )
 
 var kafkaConfig = &kafka.ConfigMap{
 	"bootstrap.servers": "localhost:9092",
-	"group.id":          "myGroup",
-	"auto.offset.reset": "earliest",
 }
 
 // Kafka struct
@@ -33,10 +33,36 @@ func (k *Kafka) Consume(topic string, fromBegining bool) {
 	for {
 		msg, err := c.ReadMessage(-1)
 		if err == nil {
-			println("Message on %s: %s\n", msg.TopicPartition, string(msg.Value))
+			fmt.Printf("Message on %s: %s\n", msg.TopicPartition.Offset, string(msg.Value))
 		} else {
-			println("Consumer error: %v (%v)\n", err, msg)
+			fmt.Printf("Consumer error: %v (%v)\n", err, msg)
 		}
 	}
 
+}
+
+// Produce topic
+func Produce(topic string, message string) {
+	p, err := kafka.NewProducer(kafkaConfig)
+
+	if err != nil {
+		panic(err)
+	}
+
+	defer p.Close()
+
+	p.ProduceChannel() <- &kafka.Message{
+		TopicPartition: kafka.TopicPartition{Topic: &topic, Partition: kafka.PartitionAny},
+		Value:          []byte(message),
+	}
+
+	e := <-p.Events()
+
+	switch ev := e.(type) {
+	case *kafka.Message:
+		if ev.TopicPartition.Error != nil {
+			fmt.Printf("Delivery failed: %v\n", ev.TopicPartition)
+		}
+
+	}
 }
