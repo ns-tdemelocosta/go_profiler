@@ -21,7 +21,7 @@ func GetProcessesInfo() ([]models.Process, error) {
 				Name:       name,
 				CPUUsage:   cpuUsage,
 				Memory:     memUsage,
-				ProcessId:  proc.Pid,
+				ProcessId:  uint32(proc.Pid),
 				CreateTime: createTime,
 			})
 		}
