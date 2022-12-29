@@ -1,7 +1,7 @@
 package gopsutil
 
 import (
-	"twitter/models"
+	"go-profiler/models"
 
 	"github.com/shirou/gopsutil/v3/process"
 )

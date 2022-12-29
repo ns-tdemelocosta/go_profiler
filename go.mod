@@ -1,4 +1,4 @@
-module twitter
+module go-profiler
 
 go 1.19
 
